@@ -1,3 +1,39 @@
+# How to run new build
+
+Run
+
+```bash
+   yarn
+```
+
+on both `backend` and `native-app` folders to install newly added packages. Steps to run the app is the same as instructions listed in their respected folders, where you just need to run
+
+```bash
+   yarn start
+```
+
+# Development process
+
+I mainly used Trello to organize tasks and requisites needed to be completed [Development Board](https://trello.com/b/dnkDBgVy/bellsant-challenge). I use a waterfall method to track my dev path and make sure to update any "checkpoints" while working on a task, such as successfully getting an installation done or fixing a code-breaking bug.
+
+# Database and packages
+
+This modified version utilizes supabase for both database and user authentication. A dotenv package was added to store my host address.
+
+# Accessing supabase
+
+Currently I am the only user able to access the databse, but can invite members to access it as well. There is no open link feature, so I must invite manually. If you are interested in looking at the database please let me know.
+
+# Incomplete or work-in-progress
+
+Currently the most recent machine data calculated gets retrieved from the local storage, which I was working on replacing that with an endpoint to get the latest created machine data stored in my supabase database. So far it has an axios call to successfully retrieve such data, but it has not yet been parsed fully to replace using the local storage.
+
+I unfortunately was not able to get through the persistence layer (and I had a lot of ideas to implement it). Trying out supabase for the first time and learning how to use it took some time to get around. I wanted to get into the visual representation of the scores as well since I've worked with converting data into graphics before.
+
+# Afterthought
+
+I wish I had more time to work on this since this challange is very exciting to work on and has me consider different approaches as well as weigh different solutions to find what fits best. Due to outside circumstances and other responsibilities I could not work on it as much, but I will save this project to work on it as an additional reference material to learn from.
+
 # Factory Health Monitor - Authentication, State Management, and Persistence
 
 ## Overview
