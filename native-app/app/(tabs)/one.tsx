@@ -6,32 +6,35 @@ import { useMachineData } from "../useMachineData";
 import { useCallback, useState } from "react";
 import { PartsOfMachine } from "../../components/PartsOfMachine";
 import { MachineScore } from "../../components/MachineScore";
+import { supabase } from "../../lib/supabase";
+// import { HOST } from "@env";
+import { useUserData } from "../useUserData";
 
 let apiUrl: string =
   "https://fancy-dolphin-65b07b.netlify.app/api/machine-health";
 
-const host = process.env.HOST; // must change back to localhost afterwards
 if (__DEV__) {
   apiUrl = `http://${
-    Platform?.OS === "android" ? "10.0.2.2" : host
-  }:3001/machine-health`;
+    Platform?.OS === "android" ? "10.0.2.2" : "localhost"
+  }:3001/`;
 }
 
 export default function StateScreen() {
   const { machineData, resetMachineData, loadMachineData, setScores } =
     useMachineData();
+  const { user, loadUserData } = useUserData();
 
   //Doing this because we're not using central state like redux
   useFocusEffect(
     useCallback(() => {
       loadMachineData();
+      loadUserData();
     }, [])
   );
 
   const calculateHealth = useCallback(async () => {
-    console.log(apiUrl);
     try {
-      const response = await axios.post(apiUrl, {
+      const response = await axios.post(apiUrl + "machine-health", {
         machines: machineData?.machines,
       });
 
@@ -49,6 +52,34 @@ export default function StateScreen() {
       );
     }
   }, [machineData]);
+
+  const SaveMachineState = async () => {
+    try {
+      const { machines, scores } = machineData;
+      const factoryInsertResponse = await supabase
+        .from("Factory")
+        .insert({
+          score: scores.factory,
+          user_id: user?.id,
+        })
+        .select();
+
+      if (factoryInsertResponse.error) throw factoryInsertResponse.error;
+
+      const factoryID = factoryInsertResponse.data[0].id;
+      for (const machine in scores.machineScores) {
+        const machineInsertResponse = await supabase.from("Machine").insert({
+          name: machine,
+          score: scores.machineScores[machine],
+          parts: JSON.stringify(machines[machine]),
+          factory_id: factoryID,
+        });
+        if (machineInsertResponse.error) throw machineInsertResponse.error;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -109,6 +140,9 @@ export default function StateScreen() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <Button title="Calculate Health" onPress={calculateHealth} />
+      <View style={styles.saveButton}>
+        <Button title="Save Machine state" onPress={SaveMachineState} />
+      </View>
       <View style={styles.resetButton}>
         <Button
           title="Reset Machine Data"
@@ -145,6 +179,9 @@ const styles = StyleSheet.create({
   linkText: {
     fontSize: 14,
     color: "#2e78b7",
+  },
+  saveButton: {
+    marginTop: 10,
   },
   resetButton: {
     marginTop: 10,

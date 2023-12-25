@@ -1,12 +1,12 @@
-import { Button, Platform, StyleSheet } from "react-native";
+import { Button, StyleSheet } from "react-native";
 import { Text, View } from "../../components/Themed";
-import { Link, useFocusEffect } from "expo-router";
-import { useCallback, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 
 export default function SettingScreen() {
   const [user, setUser] = useState(null);
 
+  // Grab logged in user's info
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) setUser(user);
@@ -23,7 +23,7 @@ export default function SettingScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.username}>User: {user && user.email}</Text>
+      <Text style={styles.username}>User: {user?.email}</Text>
       <Button title="Logout" onPress={logout} />
     </View>
   );

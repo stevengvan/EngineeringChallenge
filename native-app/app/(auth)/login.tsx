@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, StyleSheet, View, Platform } from "react-native";
 import { supabase } from "../../lib/supabase";
-import { Button, Input } from "react-native-elements";
+import { Button, Input } from "@rneui/themed";
 import { router } from "expo-router";
+import { useUserData } from "../useUserData";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,9 @@ export default function Auth() {
     });
 
     if (error) Alert.alert(error.message);
-    else router.replace("/(tabs)/one");
+    else {
+      router.replace("/(tabs)/one");
+    }
     setLoading(false);
   }
 
@@ -32,7 +35,8 @@ export default function Auth() {
     });
 
     if (error) Alert.alert(error.message);
-    else router.replace("/(tabs)/one"); // Since no confirmation email will be used, user will automatically be authenticated
+    // Since no confirmation email will be used, user will automatically be authenticated
+    else router.replace("/(tabs)/one");
 
     // ====== not using email confirmation for this challenge ======= //
     // if (!session)
